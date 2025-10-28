@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offre de Partenariat Web - Viviworks</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: white;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #4fafc4;
+            padding-bottom: 20px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4fafc4;
+            margin-bottom: 10px;
+        }
+        
+        .title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .offer-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .detail-item {
+            text-align: center;
+        }
+        
+        .detail-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .companies {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .company {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4fafc4;
+        }
+        
+        .company-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #4fafc4;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        
+        .company-info {
+            margin-bottom: 15px;
+        }
+        
+        .company-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .company-value {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+            min-height: 25px;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 3px;
+        }
+        
+        .offer-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            background: #4fafc4;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .table-container {
+            margin-bottom: 40px;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: #4fafc4;
+            color: white;
+            padding: 15px 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        
+        .total-row {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .total-row td {
+            border-bottom: 2px solid #4fafc4;
+        }
+        
+        .conditions {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4fafc4;
+        }
+        
+        .conditions-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .signature-area {
+            margin-top: 20px;
+            padding: 30px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            text-align: center;
+            color: #666;
+            background: white;
+        }
+        
+        @media print {
+            body {
+                padding: 20px;
+            }
+            
+            .header {
+                margin-bottom: 30px;
+            }
+            
+            .companies {
+                gap: 30px;
+                margin-bottom: 30px;
+            }
+            
+            table {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+            
+            .company-value {
+                border-bottom: 2px solid #999;
+            }
+            
+            .signature-area {
+                border: 2px dashed #999;
+                background: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">VIVIWORKS</div>
+        <h1 class="title">OFFRE DE PARTENARIAT</h1>
+    </div>
+    
+    <div class="offer-details">
+        <div class="detail-item">
+            <div class="detail-label">Numéro</div>
+            <div class="detail-value">VW-329933</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Date</div>
+            <div class="detail-value">15/08/2025</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Validité</div>
+            <div class="detail-value">30 jours</div>
+        </div>
+    </div>
+    
+    <div class="companies">
+        <div class="company">
+            <div class="company-title">VIVIWORKS</div>
+            <div class="company-info">
+                <div class="company-label">Adresse</div>
+                <div class="company-value"></div>
+            </div>
+            <div class="company-info">
+                <div class="company-label">Code postal et Ville</div>
+                <div class="company-value"></div>
+            </div>
+            <div class="company-info">
+                <div class="company-label">Téléphone</div>
+                <div class="company-value"></div>
+            </div>
+            <div class="company-info">
+                <div class="company-label">Email</div>
+                <div class="company-value"></div>
+            </div>
+        </div>
+        
+        <div class="company">
+            <div class="company-title">CLIENT</div>
+            <div class="company-info">
+                <div class="company-label">Adresse</div>
+                <div class="company-value"></div>
+            </div>
+            <div class="company-info">
+                <div class="company-label">Code postal et Ville</div>
+                <div class="company-value"></div>
+            </div>
+            <div class="company-info">
+                <div class="company-label">Téléphone</div>
+                <div class="company-value"></div>
+            </div>
+            <div class="company-info">
+                <div class="company-label">Email</div>
+                <div class="company-value"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="offer-title">
+        Offre de partenariat Web - Programme VIVIWORKSAUDIENCE
+    </div>
+    
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Désignation</th>
+                    <th>Quantité</th>
+                    <th>Prix unitaire H.T.</th>
+                    <th>Prix H.T.</th>
+                    <th>TVA</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Site web</td>
+                    <td>1</td>
+                    <td>0€</td>
+                    <td>0€</td>
+                    <td>20%</td>
+                    <td>0€</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="3"><strong>Total H.T.</strong></td>
+                    <td><strong>0,00€</strong></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="5"><strong>Total TVA (20%)</strong></td>
+                    <td><strong>0,00€</strong></td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="5"><strong>Total TTC</strong></td>
+                    <td><strong>0,00€</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="conditions">
+        <div class="conditions-title">Conditions de règlement :</div>
+        <div class="signature-area">
+            Signature du client<br>
+            (précédé de la mention « Bon pour accord »)
+        </div>
+    </div>
+</body>
+</html> 

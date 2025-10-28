@@ -1,0 +1,4 @@
+# Redirections pour l'application Next.js
+/app /index.html 200
+/app/* /index.html 200
+/* /index.html 200 

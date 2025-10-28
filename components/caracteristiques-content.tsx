@@ -1,306 +1,595 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { 
-  Palette, 
-  Calendar, 
-  Users, 
-  Video, 
-  Camera, 
-  Play, 
-  Eye, 
-  FileImage, 
-  GraduationCap, 
-  Search,
-  Download,
   Check,
-  Smartphone,
-  Globe,
-  Shield,
-  BarChart3,
-  Wrench,
-  Heart,
-  UserCheck,
-  Facebook,
-  Linkedin,
-  ShoppingCart,
-  FileText,
-  Briefcase,
-  Store
+  Plus,
+  Minus,
+  CheckCircle
 } from "lucide-react"
 
-const typesSites = [
-  { id: "vitrine", label: "SITE VITRINE", icon: Store, color: "#804d3b", visits: "100 VISITES/MOIS" },
-  { id: "ecommerce", label: "SITE E-COMMERCE", icon: ShoppingCart, color: "#4fafc4", visits: "150 VISITES/MOIS" },
-  { id: "blog", label: "BLOG/ACTUALITÉS", icon: FileText, color: "#6a3f2f", visits: "200 VISITES/MOIS" },
-  { id: "portfolio", label: "PORTFOLIO", icon: Briefcase, color: "#3d8a9c", visits: "80 VISITES/MOIS" },
+// Services à la carte
+const servicesCarte = [
+  { id: "audit-digital", label: "Audit digital complet", price: 890, type: "one-time" },
+  { id: "logo-identite", label: "Création logo + identité", price: 1200, type: "one-time" },
+  { id: "formation-sur-mesure", label: "Formations sur mesure", price: 150, type: "per-hour" },
+  { id: "crisis-reputation", label: "Gestion crisis e-réputation", price: 500, type: "per-intervention" },
+  { id: "hosting-android", label: "Hébergement Android", price: 25, type: "lifetime" },
+  { id: "hosting-ios", label: "Hébergement iOS", price: 99, type: "yearly" },
+  { id: "geoloc-tracking", label: "Option géolocalisation tracking en continu (hors abonnement API)", price: 2500, type: "one-time" },
 ]
 
-const optionsDisponibles = [
-  { id: "logo", label: "Création du logo", icon: Palette, description: "Logo personnalisé pour votre marque" },
-  { id: "agenda", label: "Agenda en ligne", icon: Calendar, description: "Système de prise de rendez-vous" },
-  { id: "crm", label: "CRM", icon: Users, description: "Gestion de la relation client" },
-  { id: "rdv", label: "RDV en visioconférence", icon: Video, description: "Rendez-vous en ligne intégrés" },
-  { id: "photos10", label: "Reportage 10 photos", icon: Camera, description: "Shooting photo professionnel" },
-  { id: "photos10video", label: "Reportage 10 photos + vidéo 60s", icon: Play, description: "Photos + vidéo courte" },
-  { id: "photosvisite", label: "Reportage 10 photos + visite virtuelle", icon: Eye, description: "Photos + visite 360°" },
-  { id: "photos20", label: "Reportage 20 photos", icon: FileImage, description: "Shooting photo étendu" },
-  { id: "formation", label: "Formation supplémentaire 1h", icon: GraduationCap, description: "Formation personnalisée" },
-  { id: "sea", label: "Campagne SEA", icon: Search, description: "Publicité Google Ads" },
+// Modules additionnels mensuels
+const modulesAdditionnels = [
+  { id: "ecommerce-avance", label: "E-commerce avancé", price: 400, type: "monthly" },
+  { id: "reseaux-supplementaires", label: "Réseaux sociaux supplémentaires (upsell)", price: 200, type: "monthly" },
+  { id: "redaction-web", label: "Rédaction web (articles supplémentaires)", price: 150, type: "per-article" },
+  { id: "campagnes-saisonnieres", label: "Campagnes saisonnières", price: 300, type: "per-campaign" },
+  { id: "maintenance", label: "Maintenance (3 mois gratuits puis 300€/mois)", price: 300, type: "monthly" },
 ]
 
-const offrePersonnalisee = [
-  { label: "Responsive design", icon: Smartphone, description: "Site adaptatif mobile/desktop" },
-  { label: "Référencement naturel", icon: Search, description: "SEO optimisé" },
-  { label: "Navigation sécurisée", icon: Shield, description: "HTTPS et sécurité" },
-  { label: "Statistiques", icon: BarChart3, description: "Analytics intégrés" },
-  { label: "Outil de mise à jour", icon: Wrench, description: "Interface d'administration" },
-  { label: "Formation à distance", icon: GraduationCap, description: "Formation en ligne" },
-  { label: "Accompagnement", icon: Heart, description: "Support personnalisé" },
-  { label: "Espace partenaire", icon: UserCheck, description: "Zone membre privée" },
-  { label: "Compte ViviworksDiffusion", icon: Globe, description: "Diffusion multi-canal" },
-  { label: "Page FB et GMB", icon: Facebook, description: "Réseaux sociaux" },
-  { label: "Garantie de visites", icon: Check, description: "Trafic garanti" },
+// Options chatbot (niveaux)
+const chatbotOptions = [
+  { id: "chatbot-basic", label: "Chat et chatbot : Niveau basique (FAQ statique multilingue, sans IA)", price: 1990, type: "one-time" },
+  { id: "chatbot-mid", label: "Chatbot niveau intermédiaire (NLP, multi-langues via API GPT/Dialogflow/Rasa)", price: 5590, type: "one-time" },
+  { id: "chatbot-advanced", label: "Chatbot niveau avancé (IA multilingue, traduction temps réel, connexion CRM/DB, WhatsApp/Telegram/Email)", price: 14990, type: "one-time" },
+]
+
+// Reconnaissance faciale
+const facialRecognitionOptions = [
+  { id: "facial-basic", label: "Reconnaissance faciale - Basique (FaceID/TouchID natif)", price: 990, type: "one-time" },
+  { id: "facial-mid", label: "Reconnaissance faciale - Intermédiaire (SDK/API tierce : Face++, AWS, Azure)", price: 4990, type: "one-time" },
+  { id: "facial-advanced", label: "Reconnaissance faciale - Avancé (biométrie complète + liveness + intégration CRM/DB)", price: 16990, type: "one-time" },
+]
+
+// Scanner codes-barres / QR
+const scannerOptions = [
+  { id: "scanner-basic", label: "Scanner code-barres/QR - Basique (scanner simple via caméra)", price: 590, type: "one-time" },
+  { id: "scanner-mid", label: "Scanner - Intermédiaire (multi-formats + stockage local)", price: 1290, type: "one-time" },
+  { id: "scanner-advanced", label: "Scanner - Avancé (intégration DB/ERP/CRM + génération de QR + inventaire)", price: 4990, type: "one-time" },
+]
+
+// Authentification biométrique
+const biometricAuthOptions = [
+  { id: "bio-basic", label: "Authentification biométrique - Basique (FaceID/TouchID natif)", price: 890, type: "one-time" },
+  { id: "bio-mid", label: "Authentification biométrique - Intermédiaire (SDK/API tierce)", price: 4990, type: "one-time" },
+  { id: "bio-advanced", label: "Authentification biométrique - Avancé (liveness, intégration CRM/ERP, conformité)", price: 12990, type: "one-time" },
+]
+
+// Paiement NFC / Wallet
+const nfcPaymentOptions = [
+  { id: "nfc-basic", label: "Paiement NFC/Wallet - Basique (Apple Pay / Google Pay)", price: 3990, type: "one-time" },
+  { id: "nfc-mid", label: "Paiement NFC - Intermédiaire (NFC + fidélité/coupons + Stripe/Adyen/PayPal)", price: 9990, type: "one-time" },
+  { id: "nfc-advanced", label: "Paiement NFC - Avancé (NFC + in-app purchase + multi-devises + PCI DSS + intégrations)", price: 25000, type: "one-time" },
+]
+
+// Apps mobiles IA
+const mobileAppOptions = [
+  { id: "app-mobile-ia-starter", label: "APP MOBILE IA - STARTER", price: 4999, type: "project-based" },
+  { id: "app-mobile-ia-professionnel", label: "APP MOBILE IA - PROFESSIONNEL", price: 7999, type: "project-based" },
 ]
 
 export function CaracteristiquesContent() {
-  const [selectedType, setSelectedType] = useState("vitrine")
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([])
+  const [selectedServices, setSelectedServices] = useState<any[]>([])
+  const [selectedModules, setSelectedModules] = useState<any[]>([])
+  const [selectedChatbot, setSelectedChatbot] = useState<string | null>(null)
+  const [selectedMobileApp, setSelectedMobileApp] = useState<string | null>(null)
+  const [selectedFacial, setSelectedFacial] = useState<string | null>(null)
+  const [selectedScanner, setSelectedScanner] = useState<string | null>(null)
+  const [selectedBiometricAuth, setSelectedBiometricAuth] = useState<string | null>(null)
+  const [selectedNfcPayment, setSelectedNfcPayment] = useState<string | null>(null)
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
 
-  const toggleOption = (optionId: string) => {
-    setSelectedOptions((prev) => (prev.includes(optionId) ? prev.filter((id) => id !== optionId) : [...prev, optionId]))
+  const handleServiceToggle = (serviceId: string) => {
+    const service = servicesCarte.find(s => s.id === serviceId)
+    if (!service) return
+
+    const existingIndex = selectedServices.findIndex(s => s.id === serviceId)
+    
+    if (existingIndex >= 0) {
+      // Supprimer le service
+      setSelectedServices(prev => prev.filter(s => s.id !== serviceId))
+    } else {
+      // Ajouter le service avec quantité par défaut
+      const quantity = service.type === 'per-hour' || service.type === 'per-intervention' ? 1 : 1
+      setSelectedServices(prev => [...prev, { ...service, quantity }])
+    }
   }
 
-  const getSelectedTypeData = () => {
-    return typesSites.find(type => type.id === selectedType) || typesSites[0]
+  const handleModuleToggle = (moduleId: string) => {
+    const module = modulesAdditionnels.find(m => m.id === moduleId)
+    if (!module) return
+
+    const existingIndex = selectedModules.findIndex(m => m.id === moduleId)
+    
+    if (existingIndex >= 0) {
+      // Supprimer le module
+      setSelectedModules(prev => prev.filter(m => m.id !== moduleId))
+    } else {
+      // Ajouter le module avec quantité par défaut
+      const quantity = module.type === 'per-article' || module.type === 'per-campaign' ? 1 : 1
+      setSelectedModules(prev => [...prev, { ...module, quantity }])
+    }
   }
 
-  const downloadAsPDF = () => {
-    const selectedOptionsData = optionsDisponibles.filter(option => selectedOptions.includes(option.id))
-    const typeData = getSelectedTypeData()
-    
-    const content = `
-      <html>
-        <head>
-          <title>Caractéristiques Sélectionnées</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 20px; background: #f8fafc; }
-            .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-            h1 { color: #804d3b; border-bottom: 3px solid #4fafc4; padding-bottom: 10px; margin-bottom: 30px; }
-            h2 { color: #374151; margin-top: 25px; margin-bottom: 15px; }
-            .section { margin-bottom: 25px; }
-            .type-badge { background: ${typeData.color}; color: white; padding: 8px 16px; border-radius: 20px; display: inline-block; font-weight: bold; margin-bottom: 15px; }
-            .option-card { border: 1px solid #e5e7eb; padding: 15px; margin: 10px 0; border-radius: 8px; background: #f9fafb; }
-            .option-title { font-weight: bold; color: #1f2937; margin-bottom: 5px; }
-            .option-description { color: #6b7280; font-size: 14px; }
-            .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0; }
-            .feature-item { background: #e6f3f7; padding: 12px; border-radius: 6px; border-left: 4px solid #4fafc4; }
-            .summary { background: #f5e6e0; padding: 15px; border-radius: 8px; margin: 20px 0; }
-            .date { text-align: center; color: #6b7280; font-style: italic; margin-top: 30px; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <h1>Caractéristiques Sélectionnées</h1>
-            
-            <div class="type-badge">${typeData.label}</div>
-            
-            <div class="section">
-              <h2>Type de Site</h2>
-              <p><strong>${typeData.label}</strong> - ${typeData.visits} en moyenne</p>
-            </div>
-            
-            <div class="section">
-              <h2>Options Supplémentaires Sélectionnées</h2>
-              ${selectedOptionsData.length > 0 ? 
-                selectedOptionsData.map(option => `
-                  <div class="option-card">
-                    <div class="option-title">${option.label}</div>
-                    <div class="option-description">${option.description}</div>
-                  </div>
-                `).join('') : 
-                '<p>Aucune option supplémentaire sélectionnée</p>'
-              }
-            </div>
-
-            <div class="section">
-              <h2>Caractéristiques Incluses</h2>
-              <div class="features-grid">
-                ${offrePersonnalisee.map(feature => `
-                  <div class="feature-item">
-                    <strong>${feature.label}</strong><br>
-                    <small>${feature.description}</small>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-
-            <div class="summary">
-              <h3>Résumé de l'offre</h3>
-              <p><strong>Type de site :</strong> ${typeData.label}</p>
-              <p><strong>Trafic garanti :</strong> ${typeData.visits} en moyenne</p>
-              <p><strong>Options sélectionnées :</strong> ${selectedOptionsData.length}</p>
-              <p><strong>Caractéristiques incluses :</strong> ${offrePersonnalisee.length}</p>
-            </div>
-
-            <div class="date">
-              Document généré le ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR')}
-            </div>
-          </div>
-        </body>
-      </html>
-    `
-
-    const blob = new Blob([content], { type: 'text/html' })
-    const url = URL.createObjectURL(blob)
-    
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `caracteristiques-${selectedType}-${new Date().toISOString().split('T')[0]}.html`
-    
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    
-    URL.revokeObjectURL(url)
+  const handleChatbotSelect = (chatbotId: string) => {
+    setSelectedChatbot(selectedChatbot === chatbotId ? null : chatbotId)
   }
 
-  const typeData = getSelectedTypeData()
+  const handleFacialSelect = (id: string) => {
+    setSelectedFacial(selectedFacial === id ? null : id)
+  }
+
+  const handleScannerSelect = (id: string) => {
+    setSelectedScanner(selectedScanner === id ? null : id)
+  }
+
+  const handleBiometricAuthSelect = (id: string) => {
+    setSelectedBiometricAuth(selectedBiometricAuth === id ? null : id)
+  }
+
+  const handleNfcPaymentSelect = (id: string) => {
+    setSelectedNfcPayment(selectedNfcPayment === id ? null : id)
+  }
+
+  const handleMobileAppSelect = (appId: string) => {
+    setSelectedMobileApp(selectedMobileApp === appId ? null : appId)
+  }
+
+  const updateQuantity = (type: 'service' | 'module', id: string, newQuantity: number) => {
+    if (newQuantity < 1) return
+
+    if (type === 'service') {
+      setSelectedServices(prev => 
+        prev.map(s => s.id === id ? { ...s, quantity: newQuantity } : s)
+      )
+    } else {
+      setSelectedModules(prev => 
+        prev.map(m => m.id === id ? { ...m, quantity: newQuantity } : m)
+      )
+    }
+  }
+
+  const handleConfirm = () => {
+    const selections = {
+      selectedServices,
+      selectedModules,
+      selectedChatbot,
+      selectedMobileApp,
+      selectedFacial,
+      selectedScanner,
+      selectedBiometricAuth,
+      selectedNfcPayment,
+    }
+    
+    localStorage.setItem('caracteristiques-selections', JSON.stringify(selections))
+    
+    // Afficher le message de succès
+    setShowSuccessMessage(true)
+    
+    // Masquer le message après 3 secondes
+    setTimeout(() => {
+      setShowSuccessMessage(false)
+    }, 3000)
+  }
+
+  const isServiceSelected = (serviceId: string) => {
+    return selectedServices.some(s => s.id === serviceId)
+  }
+
+  const isModuleSelected = (moduleId: string) => {
+    return selectedModules.some(m => m.id === moduleId)
+  }
+
+  const getServiceQuantity = (serviceId: string) => {
+    const service = selectedServices.find(s => s.id === serviceId)
+    return service ? service.quantity : 0
+  }
+
+  const getModuleQuantity = (moduleId: string) => {
+    const module = selectedModules.find(m => m.id === moduleId)
+    return module ? module.quantity : 0
+  }
 
   return (
-    <div className="max-w-7xl mx-auto px-4">
-      <div className="bg-white rounded-2xl shadow-lg p-3 md:p-6 h-[85vh] overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-6 h-full">
-          {/* Colonne gauche - Options disponibles */}
-          <div className="space-y-2 md:space-y-3 overflow-y-auto">
-            <div className="flex items-center gap-2 mb-2 md:mb-4">
-              <div className="w-1 h-4 md:h-5 bg-[#804d3b] rounded-full"></div>
-              <h2 className="text-sm md:text-base font-bold text-[#804d3b]">Sélectionner un autre produit</h2>
-            </div>
+    <div className="max-w-4xl mx-auto px-4">
+      <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-[#804d3b] mb-8 text-center">
+          Options complémentaires
+        </h1>
 
+        {/* Message de succès */}
+        {showSuccessMessage && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3">
+            <CheckCircle className="w-6 h-6 text-green-600" />
             <div>
-              <h3 className="font-semibold text-gray-900 mb-2 md:mb-3 text-xs md:text-sm">Options disponibles:</h3>
-              <div className="grid grid-cols-1 gap-1 md:gap-1.5">
-                {optionsDisponibles.map((option) => (
-                  <div
-                    key={option.id}
-                    className={`cursor-pointer transition-all rounded-lg border p-1.5 md:p-2 hover:shadow-sm ${
-                      selectedOptions.includes(option.id)
-                        ? "border-[#4fafc4] bg-[#e6f3f7]"
-                        : "border-gray-200 bg-white hover:border-[#4fafc4] hover:bg-[#f0f9fc]"
-                    }`}
-                    onClick={() => toggleOption(option.id)}
-                  >
-                    <div className="flex items-center gap-1.5 md:gap-2">
-                      <div
-                        className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded border flex items-center justify-center ${
-                          selectedOptions.includes(option.id) ? "bg-[#4fafc4] border-[#4fafc4]" : "border-gray-300"
+              <h3 className="text-lg font-semibold text-green-800">Sélections enregistrées !</h3>
+              <p className="text-sm text-green-700">Vos options seront incluses dans votre offre de partenariat.</p>
+            </div>
+          </div>
+        )}
+
+        {/* Services à la carte */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-[#804d3b] flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-[#804d3b]"></div>
+              Services à la Carte
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {servicesCarte.map((service) => (
+              <div key={service.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handleServiceToggle(service.id)}
+                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      isServiceSelected(service.id)
+                        ? 'bg-[#804d3b] border-[#804d3b] text-white'
+                        : 'border-gray-300 hover:border-[#804d3b]'
                         }`}
                       >
-                        {selectedOptions.includes(option.id) && (
-                          <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-white rounded-full"></div>
-                        )}
-                      </div>
-                      <option.icon className="w-2.5 h-2.5 md:w-3 md:h-3 text-[#804d3b] flex-shrink-0" />
-                      <span className="text-xs font-medium text-gray-900 leading-tight">{option.label}</span>
+                    {isServiceSelected(service.id) && <Check className="w-4 h-4" />}
+                  </button>
+                  <div>
+                    <div className="font-medium text-gray-900">{service.label}</div>
+                    <div className="text-sm text-gray-600">
+                      {service.type === 'per-hour' ? `${service.price}€/heure` :
+                       service.type === 'per-intervention' ? `${service.price}€/intervention` :
+                       service.type === 'yearly' ? `${service.price}€/an` :
+                       service.type === 'lifetime' ? `${service.price}€ à vie` :
+                       service.type === 'project-based' ? `Prix selon projet (${service.price}€)` :
+                       `${service.price}€`}
                     </div>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
 
-          {/* Colonne centrale - Types de sites et statistiques */}
-          <div className="flex flex-col justify-center items-center space-y-2 md:space-y-4">
-            {/* Sélection du type de site */}
-            <div className="w-full space-y-2">
-              {typesSites.map((type) => (
-                <Button
-                  key={type.id}
-                  onClick={() => setSelectedType(type.id)}
-                  className={`w-full px-4 md:px-6 py-1.5 md:py-2 text-xs md:text-sm font-bold rounded-xl shadow-lg transition-all ${
-                    selectedType === type.id
-                      ? `text-white`
-                      : "bg-gray-200 hover:bg-gray-300 text-gray-700"
-                  }`}
-                  style={{
-                    backgroundColor: selectedType === type.id ? type.color : undefined,
-                    borderColor: selectedType === type.id ? type.color : undefined
-                  }}
-                >
-                  {type.label}
-                </Button>
-              ))}
+                {isServiceSelected(service.id) && (service.type === 'per-hour' || service.type === 'per-intervention') && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => updateQuantity('service', service.id, getServiceQuantity(service.id) - 1)}
+                      className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="w-8 text-center">{getServiceQuantity(service.id)}</span>
+                    <button
+                      onClick={() => updateQuantity('service', service.id, getServiceQuantity(service.id) + 1)}
+                      className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
             </div>
-
-            <div className="text-center">
-              <div 
-                className="text-white px-3 md:px-4 py-2 md:py-3 rounded-xl inline-block shadow-lg"
-                style={{ background: `linear-gradient(to right, ${typeData.color}, ${typeData.color}dd)` }}
-              >
-                <div className="text-sm md:text-lg font-bold mb-1">{typeData.visits}*</div>
-                <div className="text-xs opacity-90">(Moyenne annuelle sur 12 mois)</div>
+                )}
               </div>
-            </div>
+            ))}
+          </CardContent>
+        </Card>
 
-            <div className="flex justify-center">
-              <div className="flex items-center gap-1.5 md:gap-2 bg-gradient-to-r from-[#4fafc4] to-[#3d8a9c] text-white rounded-xl p-2 md:p-3 shadow-lg">
-                <div className="w-5 h-5 md:w-6 md:h-6 bg-white/20 rounded-full flex items-center justify-center">
-                  <BarChart3 className="w-3 h-3 md:w-4 md:h-4" />
-                </div>
+        {/* Modules additionnels mensuels */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-[#804d3b] flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-[#804d3b]"></div>
+              Modules Additionnels Mensuels
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {modulesAdditionnels.map((module) => (
+              <div key={module.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handleModuleToggle(module.id)}
+                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      isModuleSelected(module.id)
+                        ? 'bg-[#804d3b] border-[#804d3b] text-white'
+                        : 'border-gray-300 hover:border-[#804d3b]'
+                    }`}
+                  >
+                    {isModuleSelected(module.id) && <Check className="w-4 h-4" />}
+                  </button>
                 <div>
-                  <div className="font-bold text-xs md:text-sm">viviworksAudience</div>
-                  <div className="text-xs opacity-90">Garantie de visites</div>
+                    <div className="font-medium text-gray-900">{module.label}</div>
+                    <div className="text-sm text-gray-600">
+                      {module.type === 'per-article' ? `${module.price}€/article` : 
+                       module.type === 'per-campaign' ? `${module.price}€/campagne` : 
+                       `${module.price}€/mois`}
                 </div>
               </div>
             </div>
 
-            {/* Bouton de téléchargement PDF */}
-            <Button 
-              onClick={downloadAsPDF}
-              className="bg-[#804d3b] hover:bg-[#6a3f2f] text-white px-4 md:px-6 py-1.5 md:py-2 text-xs md:text-sm font-bold rounded-xl shadow-lg flex items-center gap-2"
+                {isModuleSelected(module.id) && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => updateQuantity('module', module.id, getModuleQuantity(module.id) - 1)}
+                      className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="w-8 text-center">{getModuleQuantity(module.id)}</span>
+                    <button
+                      onClick={() => updateQuantity('module', module.id, getModuleQuantity(module.id) + 1)}
+                      className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100"
             >
-              <Download className="w-3 h-3 md:w-4 md:h-4" />
-              Télécharger PDF
-            </Button>
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
           </div>
+            ))}
+          </CardContent>
+        </Card>
 
-          {/* Colonne droite - Mon offre personnalisée */}
-          <div className="space-y-2 md:space-y-3 overflow-y-auto">
-            <h3 className="font-bold text-gray-900 text-sm md:text-base mb-2 md:mb-4">Mon offre personnalisée:</h3>
-
-            <div className="grid grid-cols-1 gap-1 md:gap-1.5">
-              {offrePersonnalisee.map((item, index) => (
-                <div
-                  key={index}
-                  className="bg-gradient-to-r from-[#4fafc4] to-[#3d8a9c] hover:from-[#3d8a9c] hover:to-[#2d7a8c] transition-all rounded-lg shadow-sm"
-                >
-                  <div className="p-1.5 md:p-2">
-                    <div className="flex items-center gap-1.5 md:gap-2">
-                      <item.icon className="w-2.5 h-2.5 md:w-3 md:h-3 text-white flex-shrink-0" />
-                      <span className="text-white font-medium text-xs leading-tight">{item.label}</span>
+        {/* Chatbot */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-[#804d3b] flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-[#804d3b]"></div>
+              Chatbot
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {chatbotOptions.map((chatbot) => (
+              <div key={chatbot.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handleChatbotSelect(chatbot.id)}
+                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      selectedChatbot === chatbot.id
+                        ? 'bg-[#804d3b] border-[#804d3b] text-white'
+                        : 'border-gray-300 hover:border-[#804d3b]'
+                    }`}
+                  >
+                    {selectedChatbot === chatbot.id && <Check className="w-4 h-4" />}
+                  </button>
+                  <div>
+                    <div className="font-medium text-gray-900">{chatbot.label}</div>
+                    <div className="text-sm text-gray-600">{chatbot.price}€</div>
                     </div>
                   </div>
                 </div>
               ))}
+          </CardContent>
+        </Card>
+
+        {/* Reconnaissance faciale */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-[#804d3b] flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-[#804d3b]"></div>
+              Reconnaissance faciale
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {facialRecognitionOptions.map((opt) => (
+              <div key={opt.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handleFacialSelect(opt.id)}
+                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      selectedFacial === opt.id
+                        ? 'bg-[#804d3b] border-[#804d3b] text-white'
+                        : 'border-gray-300 hover:border-[#804d3b]'
+                    }`}
+                  >
+                    {selectedFacial === opt.id && <Check className="w-4 h-4" />}
+                  </button>
+                  <div>
+                    <div className="font-medium text-gray-900">{opt.label}</div>
+                    <div className="text-sm text-gray-600">{opt.price}€</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Scanner codes-barres / QR */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-[#804d3b] flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-[#804d3b]"></div>
+              Scanner codes-barres / QR
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {scannerOptions.map((opt) => (
+              <div key={opt.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handleScannerSelect(opt.id)}
+                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      selectedScanner === opt.id
+                        ? 'bg-[#804d3b] border-[#804d3b] text-white'
+                        : 'border-gray-300 hover:border-[#804d3b]'
+                    }`}
+                  >
+                    {selectedScanner === opt.id && <Check className="w-4 h-4" />}
+                  </button>
+                  <div>
+                    <div className="font-medium text-gray-900">{opt.label}</div>
+                    <div className="text-sm text-gray-600">{opt.price}€</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Authentification biométrique */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-[#804d3b] flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-[#804d3b]"></div>
+              Authentification biométrique
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {biometricAuthOptions.map((opt) => (
+              <div key={opt.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handleBiometricAuthSelect(opt.id)}
+                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      selectedBiometricAuth === opt.id
+                        ? 'bg-[#804d3b] border-[#804d3b] text-white'
+                        : 'border-gray-300 hover:border-[#804d3b]'
+                    }`}
+                  >
+                    {selectedBiometricAuth === opt.id && <Check className="w-4 h-4" />}
+                  </button>
+                  <div>
+                    <div className="font-medium text-gray-900">{opt.label}</div>
+                    <div className="text-sm text-gray-600">{opt.price}€</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Paiement NFC / Wallet */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-[#804d3b] flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-[#804d3b]"></div>
+              Paiement NFC / Wallet
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {nfcPaymentOptions.map((opt) => (
+              <div key={opt.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handleNfcPaymentSelect(opt.id)}
+                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      selectedNfcPayment === opt.id
+                        ? 'bg-[#804d3b] border-[#804d3b] text-white'
+                        : 'border-gray-300 hover:border-[#804d3b]'
+                    }`}
+                  >
+                    {selectedNfcPayment === opt.id && <Check className="w-4 h-4" />}
+                  </button>
+                  <div>
+                    <div className="font-medium text-gray-900">{opt.label}</div>
+                    <div className="text-sm text-gray-600">{opt.price}€</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Apps Mobiles IA */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-[#804d3b] flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-[#804d3b]"></div>
+              Apps Mobiles IA
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {mobileAppOptions.map((app) => (
+              <div key={app.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => handleMobileAppSelect(app.id)}
+                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      selectedMobileApp === app.id
+                        ? 'bg-[#804d3b] border-[#804d3b] text-white'
+                        : 'border-gray-300 hover:border-[#804d3b]'
+                    }`}
+                  >
+                    {selectedMobileApp === app.id && <Check className="w-4 h-4" />}
+                  </button>
+                  <div>
+                    <div className="font-medium text-gray-900">{app.label}</div>
+                    <div className="text-sm text-gray-600">Prix selon projet ({app.price}€)</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+          </CardContent>
+        </Card>
+
+        {/* Bouton de confirmation */}
+        <div className="text-center">
+          <Button 
+            onClick={handleConfirm}
+            className="bg-[#804d3b] hover:bg-[#6a3f2f] text-white px-8 py-3 text-lg font-bold rounded-xl shadow-lg flex items-center gap-2 mx-auto"
+          >
+            <CheckCircle className="w-5 h-5" />
+            Confirmer les sélections
+          </Button>
             </div>
 
-            <div className="mt-3 md:mt-4 pt-2 md:pt-3 border-t border-gray-200">
-              <div className="flex items-center gap-1.5 md:gap-2 mb-2">
-                <div className="w-4 h-4 md:w-5 md:h-5 bg-[#4fafc4] rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">f</span>
+        {/* Récapitulatif des sélections */}
+        {(selectedServices.length > 0 || selectedModules.length > 0 || selectedChatbot || selectedMobileApp) && (
+          <div className="mt-8 p-6 bg-[#f5e6e0] border-l-4 border-[#804d3b] rounded-r-lg">
+            <h3 className="text-lg font-bold text-[#804d3b] mb-4">Récapitulatif de vos sélections</h3>
+            
+            {selectedServices.length > 0 && (
+              <div className="mb-4">
+                <h4 className="font-semibold text-[#6a3f2f] mb-2">Services à la carte :</h4>
+                <ul className="space-y-1">
+                  {selectedServices.map((service) => (
+                    <li key={service.id} className="text-sm text-[#6a3f2f]">
+                      • {service.label} : {service.type === 'per-hour' || service.type === 'per-intervention'
+                        ? `${service.price}€ × ${service.quantity} = ${service.price * service.quantity}€`
+                        : service.type === 'yearly'
+                          ? `${service.price}€/an`
+                          : service.type === 'lifetime'
+                            ? `${service.price}€ à vie`
+                            : service.type === 'project-based'
+                              ? `Prix selon projet (${service.price}€)`
+                              : `${service.price}€`}
+                    </li>
+                  ))}
+                </ul>
                 </div>
-                <div className="w-4 h-4 md:w-5 md:h-5 bg-[#3d8a9c] rounded-full flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">in</span>
+            )}
+
+            {selectedModules.length > 0 && (
+              <div className="mb-4">
+                <h4 className="font-semibold text-[#6a3f2f] mb-2">Modules additionnels :</h4>
+                <ul className="space-y-1">
+                  {selectedModules.map((module) => (
+                    <li key={module.id} className="text-sm text-[#6a3f2f]">
+                      • {module.label} : {module.type === 'per-article' || module.type === 'per-campaign'
+                        ? `${module.price}€ × ${module.quantity} = ${module.price * module.quantity}€`
+                        : `${module.price}€/mois × ${module.quantity} = ${module.price * module.quantity}€/mois`}
+                    </li>
+                  ))}
+                </ul>
                 </div>
-                <span className="text-xs text-gray-600 font-medium">Réseaux sociaux intégrés</span>
+            )}
+
+            {selectedChatbot && (
+              <div className="mb-4">
+                <h4 className="font-semibold text-[#6a3f2f] mb-2">Chatbot :</h4>
+                <ul className="space-y-1">
+                  <li className="text-sm text-[#6a3f2f]">
+                    • {chatbotOptions.find(c => c.id === selectedChatbot)?.label} : {chatbotOptions.find(c => c.id === selectedChatbot)?.price}€
+                  </li>
+                </ul>
               </div>
-            </div>
+            )}
+
+            {selectedMobileApp && (
+              <div className="mb-4">
+                <h4 className="font-semibold text-[#6a3f2f] mb-2">App Mobile IA :</h4>
+                <ul className="space-y-1">
+                  <li className="text-sm text-[#6a3f2f]">
+                    • {mobileAppOptions.find(a => a.id === selectedMobileApp)?.label} : Prix selon projet ({mobileAppOptions.find(a => a.id === selectedMobileApp)?.price}€)
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

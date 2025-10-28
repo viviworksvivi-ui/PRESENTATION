@@ -98,104 +98,69 @@ export function ArborescenceContent() {
           </style>
         </head>
         <body>
-          <h1>Arborescence du Site Web</h1>
+          <h1>Arborescence du Site</h1>
           
-          <div class="section">
-            <h2>Versions linguistiques souhaitées</h2>
-            <div class="languages">
-              ${Array.from(selectedLanguages).map(code => {
-                const lang = languages.find(l => l.code === code)
-                return lang ? `<span class="language">${lang.flag} ${lang.name}</span>` : ''
-              }).join('')}
-              ${selectedLanguages.size === 0 ? 'Aucune version étrangère sélectionnée' : ''}
-            </div>
+          <h2>Langues sélectionnées</h2>
+          <div class="languages">
+            ${Array.from(selectedLanguages).map(code => {
+              const lang = languages.find(l => l.code === code)
+              return lang ? `<span class="language">${lang.flag} ${lang.name}</span>` : ''
+            }).join('')}
           </div>
-
-          <div class="section">
-            <h2>Informations du bandeau</h2>
-            <div class="banner-info">
-              <strong>À gauche:</strong> ${bannerInfo.left || 'Non renseigné'}<br>
-              <strong>Au centre:</strong> ${bannerInfo.center || 'Non renseigné'}<br>
-              <strong>À droite:</strong> ${bannerInfo.right || 'Non renseigné'}<br>
-              <em>Caractères utilisés: ${getTotalCharacters()}/255</em>
-            </div>
+          
+          <h2>Informations du bandeau</h2>
+          <div class="banner-info">
+            <p><strong>À gauche:</strong> ${bannerInfo.left}</p>
+            <p><strong>Au centre:</strong> ${bannerInfo.center}</p>
+            <p><strong>À droite:</strong> ${bannerInfo.right}</p>
           </div>
-
-          <div class="section">
-            <h2>Suggestion d'arborescence</h2>
-            <p>${selectedSuggestion === 'none' ? 'Aucune suggestion sélectionnée' : 
-              selectedSuggestion === 'vitrine' ? 'Site vitrine classique' :
-              selectedSuggestion === 'ecommerce' ? 'Site e-commerce' :
-              selectedSuggestion === 'blog' ? 'Blog/Actualités' :
-              selectedSuggestion === 'portfolio' ? 'Portfolio' : 'Autre'}</p>
-          </div>
-
-          <div class="section">
-            <h2>Pages du site</h2>
-            <table>
-              <thead>
+          
+          <h2>Pages du site</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Page</th>
+                <th>Description</th>
+                <th>Sous-pages</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${pages.map(page => `
                 <tr>
-                  <th>Titre de la page</th>
-                  <th>Description</th>
-                  <th>Sous-pages</th>
-                  <th>Type</th>
+                  <td>${page.title}</td>
+                  <td>${page.description}</td>
+                  <td>${page.subPages}</td>
                 </tr>
-              </thead>
-              <tbody>
-                ${pages.map(page => `
-                  <tr>
-                    <td>${page.title || 'Non renseigné'}</td>
-                    <td>${page.description || 'Aucune description'}</td>
-                    <td>${page.subPages}</td>
-                    <td>${page.isFixed ? 'Page fixe' : 'Page personnalisée'}</td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-
-          <div class="section">
-            <p><em>Document généré le ${new Date().toLocaleDateString('fr-FR')} à ${new Date().toLocaleTimeString('fr-FR')}</em></p>
-          </div>
+              `).join('')}
+            </tbody>
+          </table>
         </body>
       </html>
     `
 
-    // Créer un blob avec le contenu HTML
+    // Créer un blob et télécharger
     const blob = new Blob([content], { type: 'text/html' })
     const url = URL.createObjectURL(blob)
-    
-    // Créer un lien de téléchargement
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `arborescence-site-${new Date().toISOString().split('T')[0]}.html`
-    
-    // Déclencher le téléchargement
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    
-    // Nettoyer l'URL
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'arborescence-site.html'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
     URL.revokeObjectURL(url)
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4">
-      <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Créez votre arborescence</h1>
-          
-          {/* Bouton de téléchargement PDF */}
-          <Button 
-            onClick={downloadAsPDF}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-200"
-          >
-            <Download className="w-5 h-5" />
-            Télécharger en PDF
-          </Button>
-        </div>
+    <div className="max-w-6xl mx-auto space-y-6 md:space-y-8 px-4">
+      <div className="text-center mb-6 md:mb-8">
+        <h1 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2">Arborescence de votre site</h1>
+        <p className="text-sm md:text-base text-gray-600">
+          Définissez la structure de votre site web
+        </p>
+      </div>
 
-        {/* Version étrangère souhaitée */}
+      <div className="space-y-8">
+        {/* Langues */}
         <div className="mb-8">
           <h2 className="text-lg font-medium text-gray-700 mb-4">Version étrangère souhaitée</h2>
           <div className="flex gap-6">
@@ -219,7 +184,7 @@ export function ArborescenceContent() {
             <Label className="text-lg font-medium text-gray-700">
               Quelles informations souhaitez-vous indiquer dans le bandeau de votre site ?
             </Label>
-            <span className="text-pink-500 font-medium">(Champ limité à 255 caractères)</span>
+            <span className="text-[#804d3b] font-medium">(Champ limité à 255 caractères)</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border border-gray-300 rounded-lg p-4">
@@ -267,7 +232,7 @@ export function ArborescenceContent() {
               <p className="mb-2">
                 Pour un <strong>ViviworksShop et un ViviworksBoutique</strong>, nous vous conseillons d'indiquer l'arborescence
                 suivante :
-                <span className="text-pink-600 font-medium"> Page 1 Accueil, Page 2 Boutique, Page 3 Contact</span>.
+                <span className="text-[#4fafc4] font-medium"> Page 1 Accueil, Page 2 Boutique, Page 3 Contact</span>.
               </p>
               <p>
                 On pourra ensuite ajouter en sous-page de la partie boutique l'ensemble des produits triés par
@@ -347,14 +312,14 @@ export function ArborescenceContent() {
           ))}
 
           {/* Bouton ajouter une page */}
-          <Card className="border-2 border-dashed border-gray-300 hover:border-blue-400 transition-colors">
+          <Card className="border-2 border-dashed border-gray-300 hover:border-[#4fafc4] transition-colors">
             <CardContent className="p-4 h-full flex items-center justify-center">
               <Button
                 variant="ghost"
                 onClick={addPage}
-                className="w-full h-full flex flex-col items-center justify-center gap-2 text-gray-500 hover:text-blue-600"
+                className="w-full h-full flex flex-col items-center justify-center gap-2 text-gray-500 hover:text-[#4fafc4]"
               >
-                <div className="w-12 h-12 bg-gray-600 hover:bg-blue-600 rounded-full flex items-center justify-center transition-colors">
+                <div className="w-12 h-12 bg-gray-600 hover:bg-[#4fafc4] rounded-full flex items-center justify-center transition-colors">
                   <Plus className="w-6 h-6 text-white" />
                 </div>
                 <span className="text-sm">Ajouter une page</span>
@@ -365,10 +330,10 @@ export function ArborescenceContent() {
 
         {/* Icônes d'information en bas */}
         <div className="flex justify-end gap-2 mt-6">
-          <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+          <div className="w-6 h-6 bg-[#804d3b] rounded-full flex items-center justify-center">
             <Info className="w-4 h-4 text-white" />
           </div>
-          <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center">
+          <div className="w-6 h-6 bg-[#4fafc4] rounded-full flex items-center justify-center">
             <Info className="w-4 h-4 text-white" />
           </div>
         </div>

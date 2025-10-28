@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Signature - Viviworks</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #804d3b;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .test-info {
+      background: #e0f2fe;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 4px solid #0284c7;
+    }
+    #signatureCanvas {
+      border: 4px solid #4fafc4;
+      border-radius: 10px;
+      cursor: crosshair;
+      background: white;
+      display: block;
+      margin: 20px auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      touch-action: none;
+    }
+    #signatureCanvas:hover {
+      border-color: #804d3b;
+      transform: scale(1.01);
+      transition: all 0.3s ease;
+    }
+    .button-group {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    button {
+      padding: 14px 35px;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .btn-clear {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: white;
+    }
+    .btn-clear:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+    }
+    .btn-download {
+      background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+      color: white;
+    }
+    .btn-download:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+    }
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      display: none;
+    }
+    .status.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 2px solid #10b981;
+    }
+    .status.warning {
+      background: #fef3c7;
+      color: #92400e;
+      border: 2px solid #f59e0b;
+    }
+    .console-output {
+      margin-top: 30px;
+      padding: 15px;
+      background: #1e293b;
+      color: #10b981;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .console-output div {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 Test de Signature Électronique</h1>
+    
+    <div class="test-info">
+      <strong>📝 Instructions :</strong>
+      <ol style="margin: 10px 0 0 20px;">
+        <li>Cliquez et maintenez sur le canvas blanc ci-dessous</li>
+        <li>Dessinez votre signature avec la souris (ou le doigt sur mobile)</li>
+        <li>Relâchez le bouton</li>
+        <li>Cliquez sur "Effacer" pour recommencer</li>
+        <li>Ouvrez la console (F12) pour voir les logs</li>
+      </ol>
+    </div>
+    
+    <canvas id="signatureCanvas" width="700" height="200"></canvas>
+    
+    <div class="button-group">
+      <button class="btn-clear" onclick="clearSignature()">
+        🗑️ Effacer la signature
+      </button>
+      <button class="btn-download" onclick="testSignature()">
+        ✅ Tester la signature
+      </button>
+    </div>
+    
+    <div id="statusMessage" class="status"></div>
+    
+    <div class="console-output" id="consoleOutput">
+      <div><strong>🖥️ Console de test :</strong></div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    (function() {
+      'use strict';
+      
+      const consoleDiv = document.getElementById('consoleOutput');
+      
+      function log(message, type = 'info') {
+        console.log(message);
+        const div = document.createElement('div');
+        const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : '📝';
+        div.innerHTML = `${icon} ${message}`;
+        div.style.color = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#64748b';
+        consoleDiv.appendChild(div);
+        consoleDiv.scrollTop = consoleDiv.scrollHeight;
+      }
+      
+      // Attendre que tout soit chargé
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSignature);
+      } else {
+        initSignature();
+      }
+      
+      function initSignature() {
+        log('🎨 Initialisation de la signature...', 'info');
+        
+        const canvas = document.getElementById('signatureCanvas');
+        if (!canvas) {
+          log('❌ Canvas introuvable !', 'error');
+          alert('ERREUR: Canvas de signature non trouvé. Rechargez la page.');
+          return;
+        }
+        
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        if (!ctx) {
+          log('❌ Impossible d\'obtenir le contexte 2D', 'error');
+          alert('ERREUR: Impossible d\'initialiser le canvas. Votre navigateur est-il compatible ?');
+          return;
+        }
+        
+        log(`✅ Canvas trouvé: ${canvas.width}x${canvas.height}`, 'success');
+        
+        const statusMessage = document.getElementById('statusMessage');
+        let isDrawing = false;
+        let hasSigned = false;
+        
+        // Initialiser le canvas
+        function initCanvas() {
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          
+          ctx.strokeStyle = '#e2e8f0';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(0, 0, canvas.width, canvas.height);
+          
+          ctx.font = '18px Arial';
+          ctx.fillStyle = '#cbd5e0';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('✍️ Cliquez et dessinez votre signature ici', canvas.width / 2, canvas.height / 2);
+          
+          log('✅ Canvas initialisé', 'success');
+        }
+        
+        initCanvas();
+        
+        // Obtenir les coordonnées correctes
+        function getCoords(e) {
+          const rect = canvas.getBoundingClientRect();
+          const scaleX = canvas.width / rect.width;
+          const scaleY = canvas.height / rect.height;
+          
+          let x, y;
+          
+          if (e.type.startsWith('touch')) {
+            if (!e.touches || e.touches.length === 0) return null;
+            x = (e.touches[0].clientX - rect.left) * scaleX;
+            y = (e.touches[0].clientY - rect.top) * scaleY;
+          } else {
+            x = (e.clientX - rect.left) * scaleX;
+            y = (e.clientY - rect.top) * scaleY;
+          }
+          
+          return { x, y };
+        }
+        
+        // Démarrer le dessin
+        function startDrawing(e) {
+          if (e.cancelable) e.preventDefault();
+          
+          const coords = getCoords(e);
+          if (!coords) return;
+          
+          isDrawing = true;
+          
+          if (!hasSigned) {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            hasSigned = true;
+            if (statusMessage) statusMessage.style.display = 'none';
+            log('✅ Début de signature', 'success');
+          }
+          
+          ctx.beginPath();
+          ctx.moveTo(coords.x, coords.y);
+          
+          log(`🖊️ Début tracé à (${coords.x.toFixed(0)}, ${coords.y.toFixed(0)})`, 'info');
+        }
+        
+        // Dessiner
+        function draw(e) {
+          if (!isDrawing) return;
+          if (e.cancelable) e.preventDefault();
+          
+          const coords = getCoords(e);
+          if (!coords) return;
+          
+          ctx.strokeStyle = '#804d3b';
+          ctx.lineWidth = 3;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          
+          ctx.lineTo(coords.x, coords.y);
+          ctx.stroke();
+        }
+        
+        // Arrêter le dessin
+        function stopDrawing(e) {
+          if (!isDrawing) return;
+          isDrawing = false;
+          
+          if (hasSigned) {
+            log('✅ Signature enregistrée', 'success');
+            showNotification('✅ Signature enregistrée !', 'success');
+          }
+        }
+        
+        // Notification
+        function showNotification(message, type) {
+          if (statusMessage) {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status ' + type;
+            statusMessage.style.display = 'block';
+            
+            setTimeout(() => {
+              statusMessage.style.display = 'none';
+            }, 3000);
+          }
+        }
+        
+        // Effacer
+        window.clearSignature = function() {
+          initCanvas();
+          hasSigned = false;
+          if (statusMessage) statusMessage.style.display = 'none';
+          log('🗑️ Signature effacée', 'warning');
+          showNotification('Signature effacée', 'warning');
+        };
+        
+        // Tester
+        window.testSignature = function() {
+          log('🧪 Test de la signature...', 'info');
+          
+          if (!hasSigned) {
+            log('⚠️ Aucune signature détectée', 'warning');
+            showNotification('⚠️ Veuillez signer avant de tester', 'warning');
+            return;
+          }
+          
+          log('✅ Signature détectée !', 'success');
+          
+          // Convertir en base64
+          const signatureData = canvas.toDataURL('image/png');
+          log(`✅ Signature convertie en base64 (${signatureData.length} caractères)`, 'success');
+          
+          // Vérifier les librairies
+          if (typeof window.jspdf !== 'undefined') {
+            log('✅ jsPDF chargé', 'success');
+          } else {
+            log('❌ jsPDF non chargé', 'error');
+          }
+          
+          if (typeof html2canvas !== 'undefined') {
+            log('✅ html2canvas chargé', 'success');
+          } else {
+            log('❌ html2canvas non chargé', 'error');
+          }
+          
+          showNotification('✅ Test réussi ! Tout fonctionne.', 'success');
+          log('✅ Test terminé avec succès !', 'success');
+        };
+        
+        // Attacher les événements
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseleave', stopDrawing);
+        
+        canvas.addEventListener('touchstart', startDrawing, { passive: false });
+        canvas.addEventListener('touchmove', draw, { passive: false });
+        canvas.addEventListener('touchend', stopDrawing);
+        canvas.addEventListener('touchcancel', stopDrawing);
+        
+        log('✅ Tous les événements attachés', 'success');
+        log('👍 Signature prête ! Vous pouvez dessiner.', 'success');
+      }
+    })();
+  </script>
+</body>
+</html>
+
+

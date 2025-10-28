@@ -17,6 +17,8 @@ import {
   Calendar,
   LogOut,
   User,
+  Edit,
+  FileSpreadsheet,
 } from "lucide-react"
 import { ViviworksLogo } from "@/components/viviworks-logo"
 
@@ -29,6 +31,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 
 interface AppSidebarProps {
@@ -119,6 +122,24 @@ const menuItems = [
     key: "validation",
   },
   {
+    title: "Modifications",
+    icon: Edit,
+    url: "#",
+    key: "modifications",
+  },
+  {
+    title: "Devis",
+    icon: FileSpreadsheet,
+    url: "#",
+    key: "devis",
+  },
+  {
+    title: "Liste des devis",
+    icon: FileText,
+    url: "#",
+    key: "liste-devis",
+  },
+  {
     title: "Prochaines étapes",
     icon: Calendar,
     url: "#",
@@ -127,14 +148,28 @@ const menuItems = [
 ]
 
 export function AppSidebar({ onSectionChange, onLogout, currentUser }: AppSidebarProps) {
+  const { isMobile, setOpenMobile } = useSidebar()
+  
   const handleItemClick = (key: string) => {
     onSectionChange?.(key)
+    // Fermer la sidebar sur mobile après un clic
+    if (isMobile) {
+      setOpenMobile(false)
+    }
+  }
+
+  const handleLogout = () => {
+    onLogout?.()
+    // Fermer la sidebar sur mobile
+    if (isMobile) {
+      setOpenMobile(false)
+    }
   }
 
   return (
     <Sidebar className="border-r-0">
-      <div className="bg-white h-full">
-        <SidebarHeader className="border-b border-gray-200 p-0">
+      <div className="bg-white h-full flex flex-col overflow-hidden">
+        <SidebarHeader className="border-b border-gray-200 p-0 flex-shrink-0">
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
@@ -159,8 +194,8 @@ export function AppSidebar({ onSectionChange, onLogout, currentUser }: AppSideba
           </SidebarMenu>
         </SidebarHeader>
 
-        <SidebarContent className="bg-white">
-          <SidebarGroup>
+        <SidebarContent className="bg-white flex-1 overflow-y-auto">
+          <SidebarGroup className="pb-2">
             <SidebarGroupContent>
               <SidebarMenu className="space-y-1">
                 {menuItems.slice(2).map((item) => (
@@ -181,7 +216,7 @@ export function AppSidebar({ onSectionChange, onLogout, currentUser }: AppSideba
           
           {/* Informations utilisateur connecté */}
           {currentUser && (
-            <SidebarGroup className="mt-auto border-t border-gray-200">
+            <SidebarGroup className="border-t border-gray-200 mt-4">
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
@@ -208,13 +243,13 @@ export function AppSidebar({ onSectionChange, onLogout, currentUser }: AppSideba
           )}
           
           {/* Bouton de déconnexion */}
-          <SidebarGroup>
+          <SidebarGroup className="pb-4">
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     className="text-gray-700 hover:bg-red-100 hover:text-red-900 py-2 md:py-3 px-2 md:px-4 text-sm md:text-base font-medium transition-all duration-200 active:bg-red-100 active:text-red-900"
-                    onClick={onLogout}
+                    onClick={handleLogout}
                   >
                     <LogOut className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
                     <span className="hidden sm:inline">Déconnexion</span>

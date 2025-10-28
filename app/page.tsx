@@ -12,6 +12,9 @@ import { ConditionsPartenariatContent } from "@/components/conditions-partenaria
 import { ArborescenceContent } from "@/components/arborescence-content"
 import { ValidationContent } from "@/components/validation-content"
 import { DossierPartenaireContent } from "@/components/dossier-partenaire-content"
+import { ModificationsContent } from "@/components/modifications-content"
+import { DevisContent } from "@/components/devis-content"
+import { ListeDevisContent } from "@/components/liste-devis-content"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { LoginForm } from "@/components/login-form"
@@ -139,6 +142,12 @@ export default function Page() {
                 <ValidationContent />
               ) : activeSection === "dossier" ? (
                 <DossierPartenaireContent />
+              ) : activeSection === "modifications" ? (
+                <ModificationsContent />
+              ) : activeSection === "devis" ? (
+                <DevisContent />
+              ) : activeSection === "liste-devis" ? (
+                <ListeDevisContent />
               ) : (
                 <div className="text-center py-8 sm:py-12 md:py-20">
                   <div className="max-w-2xl mx-auto px-4">

@@ -1,0 +1,195 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║               🚀 À FAIRE MAINTENANT - 5 MINUTES                   ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+
+📋 LISTE DES ACTIONS (dans l'ordre) :
+═══════════════════════════════════════════════════════════════════
+
+
+□  1. CRÉER UN COMPTE STRIPE (2 min)
+   ────────────────────────────────────────────────────────────────
+   → Ouvrez votre navigateur
+   → Allez sur : https://stripe.com
+   → Cliquez "Commencer maintenant" (coin supérieur droit)
+   → Créez votre compte :
+      • Email
+      • Mot de passe
+      • Nom de votre entreprise : VIVIWORKS
+   → Validez votre email
+   
+   ✅ C'est fait ? Passez à l'étape 2
+
+
+□  2. RÉCUPÉRER VOS CLÉS API STRIPE (1 min)
+   ────────────────────────────────────────────────────────────────
+   → Connectez-vous à : https://dashboard.stripe.com/
+   → Dans le menu de gauche, cliquez sur "Développeurs"
+   → Cliquez sur "Clés API"
+   → Vous verrez 2 clés :
+   
+      📌 Clé publique (commence par pk_test_...)
+         → Cliquez sur "Révéler la clé test"
+         → COPIEZ cette clé
+      
+      📌 Clé secrète (commence par sk_test_...)
+         → Cliquez sur "Révéler la clé test"
+         → COPIEZ cette clé (⚠️ gardez-la secrète !)
+   
+   💡 Astuce : Gardez l'onglet Stripe ouvert pour copier/coller
+   
+   ✅ Clés copiées ? Passez à l'étape 3
+
+
+□  3. CRÉER LE FICHIER .env.local (1 min)
+   ────────────────────────────────────────────────────────────────
+   → Ouvrez votre éditeur de code (VS Code, Cursor, etc.)
+   → À la RACINE du projet (même niveau que package.json)
+   → Créez un nouveau fichier : .env.local
+   → Collez dedans (REMPLACEZ par VOS clés) :
+
+   ┌─────────────────────────────────────────────────────────────┐
+   │                                                             │
+   │  STRIPE_SECRET_KEY=sk_test_COLLEZ_VOTRE_CLE_SECRETE_ICI   │
+   │  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_COLLEZ_ICI     │
+   │                                                             │
+   └─────────────────────────────────────────────────────────────┘
+   
+   → Sauvegardez le fichier (Ctrl+S)
+   
+   ⚠️ Important : Les clés doivent commencer par sk_test_ et pk_test_
+   
+   ✅ Fichier créé et sauvegardé ? Passez à l'étape 4
+
+
+□  4. REDÉMARRER LE SERVEUR (30 sec)
+   ────────────────────────────────────────────────────────────────
+   → Dans votre terminal :
+      • Appuyez sur Ctrl+C (pour arrêter le serveur)
+      • Tapez : pnpm dev
+      • Appuyez sur Entrée
+   
+   → Attendez que le serveur démarre
+   → Vous verrez : "ready - started server on 0.0.0.0:3000"
+   
+   ✅ Serveur redémarré ? Passez à l'étape 5
+
+
+□  5. TESTER LE PAIEMENT ! (1 min)
+   ────────────────────────────────────────────────────────────────
+   → Ouvrez votre navigateur : http://localhost:3000
+   → Allez dans la section "Devis"
+   → Créez un devis de test :
+      • Numéro : TEST-001
+      • Client : Test Client
+      • Email : test@example.com
+      • Service : Test (10 €)
+   
+   → Cliquez "Envoyer au client pour signature"
+   → Le fichier HTML se télécharge
+   → Ouvrez le fichier HTML
+   → Signez dans la zone blanche
+   → Cliquez "Télécharger le PDF signé"
+   → Le PDF se télécharge
+   → Attendez 2 secondes...
+   
+   ✨ MAGIE : Vous êtes redirigé vers Stripe !
+   
+   → Sur la page Stripe, entrez :
+      • Carte : 4242 4242 4242 4242
+      • Date : 12/25
+      • CVC : 123
+      • Nom : Test
+   
+   → Cliquez "Payer"
+   → Vous êtes redirigé vers la page de succès ! 🎉
+   
+   ✅ Ça marche ? FÉLICITATIONS ! 🎊
+
+
+═══════════════════════════════════════════════════════════════════
+
+🎯 VÉRIFICATION RAPIDE :
+
+Si tout a bien fonctionné, vous devriez avoir vu :
+
+✅ La page Stripe (checkout.stripe.com)
+✅ Le formulaire de paiement
+✅ La redirection vers /payment-success
+✅ Le message "Paiement réussi !"
+
+ET dans votre Dashboard Stripe :
+
+✅ Allez sur : https://dashboard.stripe.com/test/payments
+✅ Vous devriez voir votre paiement de 10,00 €
+✅ Avec le status "Réussi"
+
+═══════════════════════════════════════════════════════════════════
+
+❌ ÇA NE MARCHE PAS ?
+
+Vérifiez dans cet ordre :
+
+1. Le fichier .env.local existe-t-il ?
+   → Il doit être à la racine (même niveau que package.json)
+
+2. Les clés sont-elles correctes ?
+   → sk_test_... pour la clé secrète
+   → pk_test_... pour la clé publique
+
+3. Avez-vous redémarré le serveur après avoir créé .env.local ?
+   → Ctrl+C puis pnpm dev
+
+4. Y a-t-il des erreurs dans le terminal ?
+   → Regardez les messages en rouge
+
+5. Y a-t-il des erreurs dans la console du navigateur ?
+   → F12 pour ouvrir la console
+
+📖 Plus d'aide : Lisez VERIFICATION-STRIPE.md
+
+═══════════════════════════════════════════════════════════════════
+
+💡 PROCHAINES ÉTAPES :
+
+Une fois que le test fonctionne :
+
+□  Testez avec différents montants
+□  Testez la fonctionnalité de remise
+□  Testez l'annulation du paiement
+□  Lisez la documentation complète (README-STRIPE.md)
+□  Configurez les emails de confirmation dans Stripe
+□  Préparez le passage en production
+
+═══════════════════════════════════════════════════════════════════
+
+🎉 FÉLICITATIONS !
+
+Si vous avez suivi toutes les étapes, votre système de devis avec
+signature et paiement est maintenant OPÉRATIONNEL ! 🚀
+
+Vous pouvez maintenant :
+→ Créer des devis professionnels
+→ Les envoyer à vos clients
+→ Recevoir des paiements automatiquement
+
+═══════════════════════════════════════════════════════════════════
+
+📞 BESOIN D'AIDE ?
+
+Email : info@viviworks.fr
+Téléphone : +33 7 84 78 99 10
+
+Documentation :
+→ CONFIG-STRIPE.txt (guide express)
+→ GUIDE-PAIEMENT-STRIPE.md (guide complet)
+→ README-STRIPE.md (documentation technique)
+
+═══════════════════════════════════════════════════════════════════
+
+                    Made with 💜 by VIVIWORKS
+
+═══════════════════════════════════════════════════════════════════
+

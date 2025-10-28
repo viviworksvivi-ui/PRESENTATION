@@ -121,3 +121,44 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Amélioration du scroll sur mobile pour la sidebar */
+@layer utilities {
+  [data-sidebar="content"] {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+  }
+  
+  [data-sidebar="content"]::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  [data-sidebar="content"]::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  [data-sidebar="content"]::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 3px;
+  }
+  
+  [data-sidebar="content"]::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(156, 163, 175, 0.7);
+  }
+  
+  /* Assurer que la sidebar mobile peut scroller correctement */
+  @media (max-width: 1024px) {
+    [data-sidebar="sidebar"] {
+      max-height: 100vh;
+      max-height: 100dvh;
+    }
+    
+    [data-sidebar="content"] {
+      max-height: calc(100vh - 120px);
+      max-height: calc(100dvh - 120px);
+      overflow-y: auto !important;
+      overflow-x: hidden;
+    }
+  }
+}

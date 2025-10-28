@@ -123,15 +123,6 @@ export function LoginForm({ onLogin }: LoginFormProps) {
                 )}
               </Button>
             </form>
-
-            {/* Informations de connexion */}
-            <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-xs sm:text-sm text-blue-700 text-center">
-                <strong>Identifiants de test :</strong><br />
-                Utilisateur : <code className="bg-blue-100 px-1 rounded">aymen</code><br />
-                Mot de passe : <code className="bg-blue-100 px-1 rounded">aymen2025</code>
-              </p>
-            </div>
           </CardContent>
         </Card>
 
@@ -144,4 +135,4 @@ export function LoginForm({ onLogin }: LoginFormProps) {
       </div>
     </div>
   )
-} 
+}

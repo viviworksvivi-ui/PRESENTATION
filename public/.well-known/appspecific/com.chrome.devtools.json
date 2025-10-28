@@ -1,0 +1,8 @@
+{
+  "name": "Viviworks Presentation App",
+  "description": "Application de présentation Viviworks",
+  "version": "1.0.0",
+  "devtools": {
+    "enabled": true
+  }
+} 

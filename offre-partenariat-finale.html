@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offre de Partenariat - Viviworks</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: white;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #4fafc4;
+            padding-bottom: 20px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4fafc4;
+            margin-bottom: 10px;
+        }
+        
+        .title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .offer-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .detail-item {
+            text-align: center;
+        }
+        
+        .detail-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .companies {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .company {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4fafc4;
+        }
+        
+        .company-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #4fafc4;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        
+        .company-info {
+            margin-bottom: 15px;
+        }
+        
+        .company-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .company-value {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+            min-height: 25px;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 3px;
+        }
+        
+        .offer-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            background: #4fafc4;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        /* Styles pour les options complémentaires */
+        .options-section {
+            margin-bottom: 30px;
+        }
+        
+        .options-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4fafc4;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        
+        .options-subtitle {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .options-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .options-list li {
+            padding: 5px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        /* Styles pour le récapitulatif financier */
+        .recap-container {
+            border: 2px solid #4fafc4;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            background: #f8f9fa;
+        }
+        
+        .recap-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #4fafc4;
+            text-align: center;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        
+        .recap-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .recap-row:last-child {
+            border-bottom: none;
+        }
+        
+        .recap-label {
+            font-size: 11px;
+            color: #333;
+        }
+        
+        .recap-value {
+            font-size: 11px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .recap-total {
+            font-weight: bold;
+        }
+        
+        .recap-final {
+            font-weight: bold;
+            color: #4fafc4;
+        }
+        
+        .conditions {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #4fafc4;
+            margin-bottom: 20px;
+        }
+        
+        .conditions-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .conditions-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .conditions-list li {
+            padding: 5px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .signature-area {
+            margin-top: 20px;
+            padding: 30px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            text-align: center;
+            color: #666;
+            background: white;
+            float: right;
+            width: 300px;
+        }
+        
+        @media print {
+            body {
+                padding: 20px;
+            }
+            
+            .header {
+                margin-bottom: 30px;
+            }
+            
+            .companies {
+                gap: 30px;
+                margin-bottom: 30px;
+            }
+            
+            .company-value {
+                border-bottom: 2px solid #999;
+            }
+            
+            .signature-area {
+                border: 2px dashed #999;
+                background: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">VIVIWORKS</div>
+        <h1 class="title">OFFRE DE PARTENARIAT</h1>
+    </div>
+    
+    <div class="offer-details">
+        <div class="detail-item">
+            <div class="detail-label">Numéro</div>
+            <div class="detail-value">VW-329933</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Date</div>
+            <div class="detail-value">15/08/2025</div>
+        </div>
+        <div class="detail-item">
+            <div class="detail-label">Validité</div>
+            <div class="detail-value">30 jours</div>
+        </div>
+    </div>
+    
+    <div class="companies">
+        <div class="company">
+            <div class="company-title">VIVIWORKS</div>
+            <div class="company-info">
+                <div class="company-label">Adresse</div>
+                <div class="company-value"></div>
+            </div>
+            <div class="company-info">
+                <div class="company-label">Code postal et Ville</div>
+                <div class="company-value"></div>
+            </div>
+            <div class="company-info">
+                <div class="company-label">Téléphone</div>
+                <div class="company-value"></div>
+            </div>
+            <div class="company-info">
+                <div class="company-label">Email</div>
+                <div class="company-value"></div>
+            </div>
+        </div>
+        
+        <div class="company">
+            <div class="company-title">CLIENT</div>
+            <div class="company-info">
+                <div class="company-label">Adresse</div>
+                <div class="company-value"></div>
+            </div>
+            <div class="company-info">
+                <div class="company-label">Code postal et Ville</div>
+                <div class="company-value"></div>
+            </div>
+            <div class="company-info">
+                <div class="company-label">Téléphone</div>
+                <div class="company-value"></div>
+            </div>
+            <div class="company-info">
+                <div class="company-label">Email</div>
+                <div class="company-value"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="offer-title">
+        Offre de partenariat Web - Programme VIVIWORKSAUDIENCE
+    </div>
+    
+    <!-- OPTIONS COMPLÉMENTAIRES SÉLECTIONNÉES -->
+    <div class="options-section">
+        <div class="options-title">OPTIONS COMPLÉMENTAIRES SÉLECTIONNÉES</div>
+        <div class="options-subtitle">Services à la Carte :</div>
+        <ul class="options-list">
+            <li>☐ Audit digital complet : 890€</li>
+            <li>☐ Création logo + identité visuelle : 1 200€</li>
+            <li>☐ Formations sur mesure (par heure) : 150€</li>
+            <li>☐ Gestion crisis e-réputation : 500€</li>
+        </ul>
+        
+        <div class="options-subtitle">Modules additionnels :</div>
+        <ul class="options-list">
+            <li>☐ E-commerce avancé (par mois) : 400€</li>
+            <li>☐ Réseaux sociaux supplémentaires (par mois) : 200€</li>
+            <li>☐ Rédaction web (par article) : 150€</li>
+            <li>☐ Campagnes saisonnières (par campagne) : 300€</li>
+        </ul>
+        
+        <div class="options-subtitle">Options Chatbot :</div>
+        <ul class="options-list">
+            <li>☐ Chatbot Web (intégration site) : 1 990€</li>
+            <li>☐ Chatbot Mobile (application) : 3 490€</li>
+        </ul>
+    </div>
+    
+    <!-- RÉCAPITULATIF FINANCIER -->
+    <div class="recap-container">
+        <div class="recap-title">RÉCAPITULATIF FINANCIER</div>
+        
+        <div class="recap-row">
+            <span class="recap-label">Prix mensuel H.T. :</span>
+            <span class="recap-value">_____€</span>
+        </div>
+        
+        <div class="recap-row">
+            <span class="recap-label">Options complémentaires H.T. :</span>
+            <span class="recap-value">_____€</span>
+        </div>
+        
+        <div class="recap-row recap-total">
+            <span class="recap-label">Total H.T. :</span>
+            <span class="recap-value">_____€</span>
+        </div>
+        
+        <div class="recap-row recap-final">
+            <span class="recap-label">Total mensuel :</span>
+            <span class="recap-value">_____€</span>
+        </div>
+    </div>
+    
+    <!-- CONDITIONS -->
+    <div class="conditions">
+        <div class="conditions-title">Conditions :</div>
+        <ul class="conditions-list">
+            <li>• engagement 12 mois</li>
+            <li>• Facturation mensuelle</li>
+            <li>• Résiliation possible avec préavis de 30 jours</li>
+        </ul>
+    </div>
+    
+    <!-- SIGNATURE -->
+    <div class="signature-area">
+        <div style="font-weight: bold; margin-bottom: 10px;">Signature du client</div>
+        <div style="font-size: 12px; color: #999;">(précédé de la mention « Bon pour accord »)</div>
+        <div style="border-bottom: 1px solid #ccc; margin-top: 20px; height: 30px;"></div>
+    </div>
+    
+    <div style="clear: both;"></div>
+</body>
+</html> 

@@ -35,105 +35,76 @@ export function EntrepriseFormSimple() {
 
   const generatePDF = async () => {
     setIsSubmitting(true)
-    
     try {
-      console.log('Début de la génération PDF...')
-      
-      const pdf = new jsPDF('p', 'mm', 'a4')
+      const pdf = new jsPDF("p", "mm", "a4")
       
       // Titre
-      pdf.setFontSize(24)
-      pdf.setFont('helvetica', 'bold')
-      pdf.text('FICHE ENTREPRISE', 105, 20, { align: 'center' })
+      pdf.setFontSize(20)
+      pdf.text("FICHE ENTREPRISE", 105, 20, { align: "center" })
       
+      // Date
       pdf.setFontSize(12)
-      pdf.setFont('helvetica', 'normal')
-      pdf.text(`Document généré le ${new Date().toLocaleDateString('fr-FR')}`, 105, 30, { align: 'center' })
-      
-      // En-tête
-      pdf.setFontSize(18)
-      pdf.setFont('helvetica', 'bold')
-      pdf.text(formData.enseigne, 20, 50)
-      
-      pdf.setFontSize(12)
-      pdf.setFont('helvetica', 'normal')
-      pdf.text(formData.raisonSociale, 20, 60)
-      pdf.text(`Forme juridique: ${formData.formeSociete}`, 20, 70)
+      pdf.text(`Générée le ${new Date().toLocaleDateString('fr-FR')}`, 105, 30, { align: "center" })
       
       // Informations entreprise
       pdf.setFontSize(14)
-      pdf.setFont('helvetica', 'bold')
-      pdf.text('INFORMATIONS ENTREPRISE', 20, 90)
+      pdf.text("INFORMATIONS ENTREPRISE", 20, 50)
       
       pdf.setFontSize(10)
-      pdf.setFont('helvetica', 'normal')
-      pdf.text(`Enseigne: ${formData.enseigne}`, 20, 105)
-      pdf.text(`Raison sociale: ${formData.raisonSociale}`, 20, 115)
-      pdf.text(`Forme juridique: ${formData.formeSociete}`, 20, 125)
-      pdf.text(`Code APE: ${formData.codeAPE}`, 20, 135)
-      pdf.text(`SIRET: ${formData.siret}`, 20, 145)
+      let y = 60
+      pdf.text(`Enseigne: ${formData.enseigne}`, 20, y)
+      y += 8
+      pdf.text(`Raison sociale: ${formData.raisonSociale}`, 20, y)
+      y += 8
+      pdf.text(`Forme juridique: ${formData.formeSociete}`, 20, y)
+      y += 8
+      pdf.text(`Code APE: ${formData.codeAPE}`, 20, y)
+      y += 8
+      pdf.text(`SIRET: ${formData.siret}`, 20, y)
       
       // Adresse
+      y += 15
       pdf.setFontSize(14)
-      pdf.setFont('helvetica', 'bold')
-      pdf.text('ADRESSE', 20, 165)
+      pdf.text("ADRESSE", 20, y)
       
+      y += 10
       pdf.setFontSize(10)
-      pdf.setFont('helvetica', 'normal')
-      pdf.text(`Adresse: ${formData.adresse}`, 20, 180)
-      pdf.text(`Code postal: ${formData.codePostal}`, 20, 190)
-      pdf.text(`Ville: ${formData.ville}`, 20, 200)
+      pdf.text(`Adresse: ${formData.adresse}`, 20, y)
+      y += 8
+      pdf.text(`Code postal: ${formData.codePostal}`, 20, y)
+      y += 8
+      pdf.text(`Ville: ${formData.ville}`, 20, y)
       
       // Contact
+      y += 15
       pdf.setFontSize(14)
-      pdf.setFont('helvetica', 'bold')
-      pdf.text('CONTACT', 20, 220)
+      pdf.text("CONTACT PRINCIPAL", 20, y)
       
+      y += 10
       pdf.setFontSize(10)
-      pdf.setFont('helvetica', 'normal')
-      pdf.text(`Nom complet: ${formData.prenom} ${formData.nom}`, 20, 235)
-      pdf.text(`Email: ${formData.email}`, 20, 245)
-      pdf.text(`Téléphone: ${formData.telephone}`, 20, 255)
+      pdf.text(`Prénom: ${formData.prenom}`, 20, y)
+      y += 8
+      pdf.text(`Nom: ${formData.nom}`, 20, y)
+      y += 8
+      pdf.text(`Email: ${formData.email}`, 20, y)
+      y += 8
+      pdf.text(`Téléphone: ${formData.telephone}`, 20, y)
       
-      const dateNaissance = formData.dateNaissance ? new Date(formData.dateNaissance).toLocaleDateString('fr-FR') : 'Non renseigné'
-      const dateCreation = formData.dateCreation ? new Date(formData.dateCreation).toLocaleDateString('fr-FR') : 'Non renseigné'
+      if (formData.dateNaissance) {
+        y += 8
+        pdf.text(`Date de naissance: ${formData.dateNaissance}`, 20, y)
+      }
       
-      pdf.text(`Date de naissance: ${dateNaissance}`, 20, 265)
-      pdf.text(`Date de création: ${dateCreation}`, 20, 275)
+      if (formData.dateCreation) {
+        y += 8
+        pdf.text(`Date de création: ${formData.dateCreation}`, 20, y)
+      }
       
-      // Pied de page
-      pdf.setFontSize(8)
-      pdf.setFont('helvetica', 'italic')
-      pdf.text('Document généré automatiquement par Viviworks', 105, 280, { align: 'center' })
-      pdf.text(`Date de génération: ${new Date().toLocaleString('fr-FR')}`, 105, 285, { align: 'center' })
-
-      const fileName = `entreprise_${formData.enseigne.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`
-      pdf.save(fileName)
-      
-      console.log('PDF généré avec succès:', fileName)
-      toast.success('PDF généré avec succès !')
-      
-      // Réinitialiser le formulaire
-      setFormData({
-        enseigne: "",
-        raisonSociale: "",
-        formeSociete: "",
-        codeAPE: "",
-        siret: "",
-        adresse: "",
-        codePostal: "",
-        ville: "",
-        prenom: "",
-        nom: "",
-        dateNaissance: "",
-        email: "",
-        telephone: "",
-        dateCreation: "",
-      })
-      
+      pdf.save("fiche-entreprise.pdf")
+      toast.success("PDF généré avec succès !")
     } catch (error) {
-      console.error('Erreur lors de la génération du PDF:', error)
-      toast.error(`Erreur lors de la génération du PDF: ${error.message}`)
+      console.error("Erreur lors de la génération du PDF:", error)
+      toast.error("Erreur lors de la génération du PDF")
     } finally {
       setIsSubmitting(false)
     }
@@ -181,7 +152,6 @@ export function EntrepriseFormSimple() {
                 </Label>
                 <Input
                   id="enseigne"
-                  placeholder="Ex: MKR FROID"
                   value={formData.enseigne}
                   onChange={(e) => handleInputChange("enseigne", e.target.value)}
                   className="border-0 border-b-2 border-gray-300 rounded-none focus:border-[#804d3b] bg-transparent text-sm md:text-base"
@@ -194,7 +164,6 @@ export function EntrepriseFormSimple() {
                 </Label>
                 <Input
                   id="raisonSociale"
-                  placeholder="Ex: MKR FROID"
                   value={formData.raisonSociale}
                   onChange={(e) => handleInputChange("raisonSociale", e.target.value)}
                   className="border-0 border-b-2 border-gray-300 rounded-none focus:border-blue-500 bg-transparent text-sm md:text-base"
@@ -207,10 +176,7 @@ export function EntrepriseFormSimple() {
                 </Label>
                 <Select
                   value={formData.formeSociete}
-                  onValueChange={(value) => {
-                    console.log('Forme société sélectionnée:', value)
-                    handleInputChange("formeSociete", value)
-                  }}
+                  onValueChange={(value) => handleInputChange("formeSociete", value)}
                 >
                   <SelectTrigger className="border-0 border-b-2 border-gray-300 rounded-none focus:border-blue-500 bg-transparent text-sm md:text-base">
                     <SelectValue placeholder="Sélectionnez la forme juridique" />
@@ -223,9 +189,6 @@ export function EntrepriseFormSimple() {
                     <SelectItem value="SA">SA</SelectItem>
                   </SelectContent>
                 </Select>
-                {formData.formeSociete && (
-                  <p className="text-xs text-green-600">Sélectionné: {formData.formeSociete}</p>
-                )}
               </div>
             </div>
 
@@ -236,7 +199,6 @@ export function EntrepriseFormSimple() {
                 </Label>
                 <Input
                   id="codeAPE"
-                  placeholder="Ex: 4322B - Travaux d'installation d'équipements thermiques"
                   value={formData.codeAPE}
                   onChange={(e) => handleInputChange("codeAPE", e.target.value)}
                   className="border-0 border-b-2 border-gray-300 rounded-none focus:border-blue-500 bg-transparent text-sm md:text-base"
@@ -249,7 +211,6 @@ export function EntrepriseFormSimple() {
                 </Label>
                 <Input
                   id="siret"
-                  placeholder="Ex: 48342923900013"
                   value={formData.siret}
                   onChange={(e) => handleInputChange("siret", e.target.value)}
                   className="border-0 border-b-2 border-gray-300 rounded-none focus:border-blue-500 bg-transparent text-sm md:text-base"
@@ -265,7 +226,6 @@ export function EntrepriseFormSimple() {
                 </Label>
                 <Input
                   id="adresse"
-                  placeholder="Ex: 9 rue des cordeliers"
                   value={formData.adresse}
                   onChange={(e) => handleInputChange("adresse", e.target.value)}
                   className="border-0 border-b-2 border-gray-300 rounded-none focus:border-blue-500 bg-transparent text-sm md:text-base"
@@ -278,7 +238,6 @@ export function EntrepriseFormSimple() {
                 </Label>
                 <Input
                   id="codePostal"
-                  placeholder="Ex: 95300"
                   value={formData.codePostal}
                   onChange={(e) => handleInputChange("codePostal", e.target.value)}
                   className="border-0 border-b-2 border-gray-300 rounded-none focus:border-blue-500 bg-transparent text-sm md:text-base"
@@ -291,7 +250,6 @@ export function EntrepriseFormSimple() {
                 </Label>
                 <Input
                   id="ville"
-                  placeholder="Ex: PONTOISE"
                   value={formData.ville}
                   onChange={(e) => handleInputChange("ville", e.target.value)}
                   className="border-0 border-b-2 border-gray-300 rounded-none focus:border-blue-500 bg-transparent text-sm md:text-base"
@@ -310,7 +268,6 @@ export function EntrepriseFormSimple() {
                   </Label>
                   <Input
                     id="prenom"
-                    placeholder="Ex: Aiman"
                     value={formData.prenom}
                     onChange={(e) => handleInputChange("prenom", e.target.value)}
                     className="border-0 border-b-2 border-gray-300 rounded-none focus:border-blue-500 bg-transparent text-sm md:text-base"
@@ -323,7 +280,6 @@ export function EntrepriseFormSimple() {
                   </Label>
                   <Input
                     id="nom"
-                    placeholder="Ex: BELLARA"
                     value={formData.nom}
                     onChange={(e) => handleInputChange("nom", e.target.value)}
                     className="border-0 border-b-2 border-gray-300 rounded-none focus:border-blue-500 bg-transparent text-sm md:text-base"
@@ -335,14 +291,14 @@ export function EntrepriseFormSimple() {
                     Date de naissance
                   </Label>
                   <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <Input
                       id="dateNaissance"
                       type="date"
                       value={formData.dateNaissance}
                       onChange={(e) => handleInputChange("dateNaissance", e.target.value)}
-                      className="border-0 border-b-2 border-gray-300 rounded-none focus:border-blue-500 bg-transparent pr-10 text-sm md:text-base"
+                      className="pl-10 border-0 border-b-2 border-gray-300 rounded-none focus:border-blue-500 bg-transparent text-sm md:text-base"
                     />
-                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                   </div>
                 </div>
               </div>
@@ -355,7 +311,6 @@ export function EntrepriseFormSimple() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="Ex: mkrfroid@gmail.com"
                     value={formData.email}
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     className="border-0 border-b-2 border-gray-300 rounded-none focus:border-blue-500 bg-transparent text-sm md:text-base"
@@ -369,7 +324,6 @@ export function EntrepriseFormSimple() {
                   <Input
                     id="telephone"
                     type="tel"
-                    placeholder="Ex: +33784789910"
                     value={formData.telephone}
                     onChange={(e) => handleInputChange("telephone", e.target.value)}
                     className="border-0 border-b-2 border-gray-300 rounded-none focus:border-blue-500 bg-transparent text-sm md:text-base"
@@ -381,43 +335,58 @@ export function EntrepriseFormSimple() {
                     Date de création
                   </Label>
                   <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <Input
                       id="dateCreation"
                       type="date"
                       value={formData.dateCreation}
                       onChange={(e) => handleInputChange("dateCreation", e.target.value)}
-                      className="border-0 border-b-2 border-gray-300 rounded-none focus:border-blue-500 bg-transparent pr-10 text-sm md:text-base"
+                      className="pl-10 border-0 border-b-2 border-gray-300 rounded-none focus:border-blue-500 bg-transparent text-sm md:text-base"
                     />
-                    <Calendar className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Section finale */}
-            <div className="mt-12 md:mt-16 text-center">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 md:mb-8">Pour mieux vous connaître</h2>
-
-              <div className="flex justify-center">
-                <Button 
-                  size="lg" 
-                  className="bg-[#804d3b] hover:bg-[#6a3f2f] text-white px-6 md:px-8 shadow-lg hover:shadow-xl transition-all duration-200"
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Génération PDF...
-                    </>
-                  ) : (
-                    <>
-                      <Download className="w-4 h-4 mr-2" />
-                      Générer PDF
-                    </>
-                  )}
-                </Button>
-              </div>
+            {/* Bouton de génération PDF */}
+            <div className="mt-8 md:mt-12 text-center">
+              <Button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                className="bg-[#804d3b] hover:bg-[#6a3f2f] text-white px-8 py-3 text-lg font-semibold mr-4"
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    <span>Génération en cours...</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Download className="w-5 h-5" />
+                    <span>Générer PDF</span>
+                  </div>
+                )}
+              </Button>
+              
+              {/* Bouton Confirmer pour envoyer vers l'offre de partenariat */}
+              <Button
+                onClick={() => {
+                  // Sauvegarder les informations dans localStorage pour les récupérer dans l'offre
+                  localStorage.setItem('entreprise-info', JSON.stringify({
+                    adresse: formData.adresse,
+                    codePostal: formData.codePostal,
+                    ville: formData.ville,
+                    telephone: formData.telephone,
+                    email: formData.email
+                  }))
+                  
+                  // Afficher un message de confirmation
+                  toast.success("Informations confirmées ! Vous pouvez maintenant consulter l'offre de partenariat.")
+                }}
+                className="bg-[#4fafc4] hover:bg-[#3d8ba0] text-white px-8 py-3 text-lg font-semibold"
+              >
+                <span>Confirmer</span>
+              </Button>
             </div>
           </div>
         </CardContent>

@@ -28,3 +28,5 @@ next-env.d.ts
 
 # data files (sensitive information)
 /data/*.json
+# Local Netlify folder
+.netlify
